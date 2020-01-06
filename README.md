@@ -31,16 +31,25 @@ At the end of an installation you will have a couple of docker containers runnin
 - discord-like instant messaging app with Rocket chat
 
 ## How it works(what the script does):
-1- The script will ask you for an admin/password combination and email. They will be used as local admins for each of the apps.
-2- The script will ask your for your 5 domains. Can be 5 different domains. or a domain for home and subdomain or whatever you want as long as they point to the server ip.
-3- Write some data in config files. (in .env file)
-3- The script will launch the reverse proxy (basically the set of containers from Docker-letsencrypt-nginx-proxy-companion)
-4- The script will launch keycloak and wait till it's installed (you will have to manually press enter or use auto mode)
-5- The script will create 3 clients in Keyclaok for WP, Nextcloud, and Rocketchat.
-6. The script will retrieve the secrets for 3 created clients and store them in the .env file
-7. The script will launch WP+NC+Rocketchant+Apache.
-8. OpenID is configured in Rocket chat via environment variables.
-9. At this point you have working WP+NC without OpenID configured. The script will then insert into WP and NC's sql databases the config data and activate openID for both of them.
+1. The script will ask you for an admin/password combination and email. They will be used as local admins for each of the apps.
+
+2. The script will ask your for your 5 domains. Can be 5 different domains. or a domain for home and subdomain or whatever you want as long as they point to the server ip.
+
+3. Write some data in config files. (in .env file)
+
+4. The script will launch the reverse proxy (basically the set of containers from Docker-letsencrypt-nginx-proxy-companion)
+
+5. The script will launch keycloak and wait till it's installed (you will have to manually press enter or use auto mode)
+
+6. The script will create 3 clients in Keyclaok for WP, Nextcloud, and Rocketchat.
+
+7. The script will retrieve the secrets for 3 created clients and store them in the .env file
+
+8. The script will launch WP+NC+Rocketchant+Apache.
+
+9. OpenID is configured in Rocket chat via environment variables.
+
+10. At this point you have working WP+NC without OpenID configured. The script will then insert into WP and NC's sql databases the config data and activate openID for both of them.
 
 
 ## Usage:
