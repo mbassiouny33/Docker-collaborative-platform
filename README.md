@@ -40,7 +40,7 @@ While installing the script will stop and ask you to visit your web sites to che
 
 If you opt for usage with arguments you will have to give all arguements, they're all mandatory.
 
-##### faster lauch (auto = false) 
+#### faster lauch (auto = false) 
 just like the guided usage with a blocking wait but you only run the script faster or you can use shell variables.
 
 Example: 
@@ -51,7 +51,7 @@ You can also use long version
 
 ```python3 installation.py --user adminusername --password mySecretpassword --mail_address maihhl@mail.com --homepage_domain homepage.mydomain.com --auth_keycloak_domain keycloack-auth.mydomain.com --blog_domain wordpressBlogddsd.com --cloud_domain nextcloud.mydomain.com --chat_domain rocketchat.mydomain.org --auto false```
 
-##### Fully automated (auto = true) [ experimental !]
+#### Fully automated (auto = true) [ experimental !]
 Sometimes you might want to do a headless installation without interacting with the shell. There are various cases where you just wanna run 1 single command and that's it, for example if you run the command with WinSCP's non-interactive shell or inside a loop to install on multiple machines with an algorithm like 
 such as
 
