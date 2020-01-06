@@ -1,5 +1,5 @@
 # Docker-collaborative-platform
-A one-click installation script for a Dockerized environment with a couple of apps (wordpress, nextcloud,rocketchat, OpenlD(via keycloak))
+A one-click installation script for a Dockerized environment with a couple of apps (wordpress, nextcloud,rocketchat), an automated openid login (via keycloak) in order to unify a single set of login credentials for all services and an automated reverse proxy with ssl.
 
 
 ## Requirements:
@@ -14,10 +14,12 @@ A one-click installation script for a Dockerized environment with a couple of ap
 - wordpress 
 - Rocket.chat
 - Apache 
-- docker-letsencrypt-nginx-proxy-companion
+- docker-letsencrypt-nginx-proxy-companion ( an automated reverse proxy with valid ssl!)
 
-## What this script does (goal):
-The script will install a colaborative platforme, which can be used for filesharing, posting articles,  and chatting.
+## What the installation script does (goal):
+In plain english: The script will install a colaborative platforme, which can be used for filesharing, posting articles,  and chatting. An admin account will be created during the installation
+In technical terms: it's just a bunch of scripts to run a couple of docker containers, initialize them and configures openid settings automatically for a single sign-on.
+
 
 ## The outcome (/result)
 At the end of an installation you will have a couple of docker containers running the following:
@@ -29,28 +31,43 @@ At the end of an installation you will have a couple of docker containers runnin
 ### Guided usage (default)
 1. configure your 5 domains 
 2. clone or download the zip of this repo.
-3. Simlpy run the script without any arguments the script will prompot for the required .
+3. Simlpy run the script without any arguments the script will prompt for the required data.
+While installing the script will stop and ask you to visit your web sites to check if they work, once they're up press enter.
  ``` python3 installation.py```
 3. After the installation is done you will notice Wordpress and nextcloud have login with keycloack buttons but not rocketchat. This is due to a bug that might be fixed in later versions of rocket chat. The currect solution is: go to your Rocket.chat website login with the admin credentials you provided to the script  click options (the 3 points on top left) > administration> oauth (scroll down under settings) > add custom oauth > call it "keycloak" (without quotes). Save and the settings will be filled for you.
 
 ### advanced usage with arguments
+
+If you opt for usage with arguments you will have to give all arguements, they're all mandatory.
+
 ##### faster lauch (auto = false) 
+just like the guided usage with a blocking wait but you only run the script faster or you can use shell variables.
+
+Example: 
+
 ##### Fully automated (auto = true) [ experimental !]
 Sometimes you might want to do a headless installation without interacting with the shell. There are various cases where you just wanna run 1 single command and that's it, for example if you run the command with WinSCP's non-interactive shell or inside a loop to install on multiple machines with an algorithm like 
 such as
 
 ```
 for (i in 0:50)
-   DO on server[i] : run this python script with {set_of_names}.listOFdomains[i].org
+   DO on server[i] : run this python script with arguments {set_of_names}.listOFdomains[i].org
 ```
 
-simple example 
+Example 
 `
 `
 
+##### List of arguments:
+The arguments with the above examples are pretty intuitive  but here's a list of arguments if you still need it:
 
 
-## Goal
+
+
+## Extending this script for production use:
+While this script works good enough, it was not meant for production enviornment. So here's a couple of things to do if you plan to use in production.
+- Change temporary dockers volumes to persistent volumes
+- if you already have a userbase on an LDAP/SAML server, keycloak can delegate the authentication to them. You just need to configure it with the administration panel. 
 
 
 
