@@ -45,11 +45,11 @@ just like the guided usage with a blocking wait but you only run the script fast
 
 Example: 
 
-`python3 installation.py -u adminusername -p mySecretpassword -m maihhl@mail.com -i homepage.mydomain.com -k keycloack-auth.mydomain.com -w wordpressBlogddsd.com -n nextcloud.mydomain.com -r rocketchat.mydomain.org -a false`
+```python3 installation.py -u adminusername -p mySecretpassword -m maihhl@mail.com -i homepage.mydomain.com -k keycloack-auth.mydomain.com -w wordpressBlogddsd.com -n nextcloud.mydomain.com -r rocketchat.mydomain.org -a false```
 
 You can also use long version
 
-`python3 installation.py --user adminusername --password mySecretpassword --mail_address maihhl@mail.com --homepage_domain homepage.mydomain.com --auth_keycloak_domain keycloack-auth.mydomain.com --blog_domain wordpressBlogddsd.com --cloud_domain nextcloud.mydomain.com --chat_domain rocketchat.mydomain.org --auto false`
+```python3 installation.py --user adminusername --password mySecretpassword --mail_address maihhl@mail.com --homepage_domain homepage.mydomain.com --auth_keycloak_domain keycloack-auth.mydomain.com --blog_domain wordpressBlogddsd.com --cloud_domain nextcloud.mydomain.com --chat_domain rocketchat.mydomain.org --auto false```
 
 ##### Fully automated (auto = true) [ experimental !]
 Sometimes you might want to do a headless installation without interacting with the shell. There are various cases where you just wanna run 1 single command and that's it, for example if you run the command with WinSCP's non-interactive shell or inside a loop to install on multiple machines with an algorithm like 
@@ -60,10 +60,14 @@ for (i in 0:50)
    DO on server[i] : run this python script with arguments {set_of_names}.listOFdomains[i].org
 ```
 
+
+WARNING: instead of waiting for your confirmation when SSl signature is done, the script will blindly wait for an amount of seconds and try to resume. Thus it might fail if the wait timer is over before letsencrypt signs your certificate.
+
+
 Example 
-`
+```
 python3 installation.py -u adminusername -p mySecretpassword -m maihhl@mail.com -i homepage.mydomain.com -k keycloack-auth.mydomain.com -w wordpressBlogddsd.com -n nextcloud.mydomain.com -r rocketchat.mydomain.org -a True
-`
+```
 
 ##### List of arguments:
 The arguments with the above examples are pretty intuitive  but here's a list of arguments if you still need it:
