@@ -17,7 +17,8 @@ A one-click installation script for a Dockerized environment with a couple of ap
 - Docker-letsencrypt-nginx-proxy-companion ( an automated reverse proxy with valid ssl!)
 
 ## What the installation script does (goal):
-In plain English: The script will install a colaborative platforme, which can be used for filesharing, posting articles, and chat. An admin account will be created during the installation
+In plain English: The script will install a colaborative platforme, which can be used for filesharing, posting articles, and chat. An admin account will be created during the installation.
+It is useful for schools for example, where you might want to offer complete e-learning tools for students or for a company wishing to offer such filesharing and chat features to their employees.
 In technical terms: it's just a bunch of scripts to run a couple of docker containers, initialize them and configures OpenID settings automatically for a single sign-on.
 
 
@@ -25,19 +26,20 @@ In technical terms: it's just a bunch of scripts to run a couple of docker conta
 At the end of an installation you will have a couple of docker containers running the following:
 - A simple home page with links to the other 4 services
 - A Keycloak openID authentication server
-- 
+- A blog with wordpress
+- a file sharing service with Nextcloud (like Gdrive and MS onedrive)
+- discord-like instant messaging app with Rocket chat
 
 ## How it works(what the script does):
 
 ## Usage:
 ### Guided usage (default)
-1. configure your 5 domains 
-2. clone or download the zip of this repo and Enteir.
-3. Make the the insertion script executable`chmod a+x push_oid2db.sh`
-4. Simply run the script without any arguments the script will prompt for the required data.
+1. configure your 5 domains to point to the server ip.
+2. clone or download the zip of this repo and Enter it.
+3. Simply run the script without any arguments the script will prompt for the required data.
 While installing the script will stop and ask you to visit your web sites to check if they work, once they're up press enter.
  ``` python3 installation.py```
-5. After the installation is done you will notice Wordpress and nextcloud have login with keycloack buttons but not rocketchat. This is due to a bug that might be fixed in later versions of rocket chat. The current solution is: go to your Rocket.chat website login with the admin credentials you provided to the script  click options (the 3 points on top left) > administration> oauth (scroll down under settings) > add custom Oauth > call it "keycloak" (without quotes). Save and the settings will be filled for you.
+4. After the installation is done you will notice Wordpress and nextcloud have login with keycloack buttons but not rocketchat. This is due to a bug that might be fixed in later versions of rocket chat. The current solution is: go to your Rocket.chat website login with the admin credentials you provided to the script  click options (the 3 points on top left) > administration> oauth (scroll down under settings) > add custom Oauth > call it "keycloak" (without quotes). Save and the settings will be filled for you.
 
 ### advanced usage with arguments
 
@@ -106,7 +108,7 @@ While this script works good enough, it was not meant for production enviornment
 Usually this is due to certificates taking time to be signed. Be patient it might take a couple of minutes (up to 15!)
 
 #### Rocket.chat does not have keycloack option
-Please go to Usage section and check instructions for guided installation step 4
+Please go to Usage section and check instructions for guided installation step 4.
 
 
 #### Rocket.chat does nothing after I authenticate with Keycloak
@@ -128,4 +130,3 @@ Probaly the automated insertion of openid setting failed because by the time the
 - cd to script directory
 - Run `chmod a+x push_oid2db.sh`
 - Run `./push_oid2db.sh` (might take 1-2 minutes to install)
-####
