@@ -1,0 +1,225 @@
+version: '3'
+
+services:
+   openid_keycloak:
+    container_name: openid_keycloak
+    image: jboss/keycloak
+    restart: always
+    environment:
+      KEYCLOAK_USER: ${sd_global_admin}
+      KEYCLOAK_PASSWORD: ${sd_global_passwd}
+      VIRTUAL_HOST: ${keycloak_domain}
+      VIRTUAL_PORT: 8443
+      VIRTUAL_PROTO: https
+      LETSENCRYPT_HOST: ${keycloak_domain}
+      LETSENCRYPT_EMAIL: ${sdtc_admin_email}
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
+        #JDBC_PARAMS: "connectTimeout=30000"
+    expose:
+      - 8443
+
+   sdtc_sql_db:
+     container_name: sdtc_sql_db
+     image: mariadb:latest
+     restart: unless-stopped
+     volumes:
+        - ${LOCAL_DB_DIR}:/var/lib/mysql
+        - ./scripts:/docker-entrypoint-initdb.d
+     environment:
+       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+       MYSQL_USER: ${MYSQL_USER}
+       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+       MYSQL_DATABASE: ${SDTC_WP_table}
+       MYSQL_DATABASE_NC: ${SDTC_NC_table}
+       keycloack_auth_url: https://${keycloak_domain}/auth/realms/master/protocol/openid-connect/auth
+       keycloack_token_url: https://${keycloak_domain}/auth/realms/master/protocol/openid-connect/token
+       keycloack_userinfo_url: https://${keycloak_domain}/auth/realms/master/protocol/openid-connect/userinfo
+       keycloack_logout_url: https://${keycloak_domain}/auth/realms/master/protocol/openid-connect/logout
+       nc_secret: ${nc_secret}
+       wp_secret: ${wp_secret}
+
+
+   sdtc_nextcloud:
+     depends_on:
+       - sdtc_sql_db
+     container_name: sdtc_nextcloud
+     image: nextcloud:latest
+     restart: unless-stopped
+     volumes:
+       - ${LOCAL_DATA_DIR}:/var/www/html
+#       - ${LOCAL_CONF_DIR}:/var/www/html/config
+#       - ${LOCAL_APPS_DIR}:/var/www/html/apps
+     environment:
+       NEXTCLOUD_ADMIN_USER: ${sd_global_admin}
+       NEXTCLOUD_ADMIN_PASSWORD: ${sd_global_passwd}
+       NEXTCLOUD_TRUSTED_DOMAINS: ${nc_domain}
+       VIRTUAL_HOST: ${nc_domain}
+       LETSENCRYPT_HOST: ${nc_domain}
+       LETSENCRYPT_EMAIL: ${sdtc_admin_email}
+       MYSQL_DATABASE: ${SDTC_NC_table}
+       MYSQL_USER: ${MYSQL_USER}
+       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+       MYSQL_HOST: sdtc_sql_db
+
+
+   rocketchat:
+    container_name: sdtc_rocketchat
+    image: rocketchat/rocket.chat:latest
+    command: >
+      bash -c
+        "for i in `seq 1 30`; do
+          node main.js &&
+          s=$$? && break || s=$$?;
+          echo \"Tried $$i times. Waiting 5 secs...\";
+          sleep 5;
+        done; (exit $$s)"
+    restart: unless-stopped
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+       PORT: 3000
+       ROOT_URL: https://${rc_domain}
+       MONGO_URL: mongodb://mongo:27017/rocketchat
+       MONGO_OPLOG_URL: mongodb://mongo:27017/local
+       Accounts_UseDNSDomainCheck: "false"
+       MAIL_URL: smtp://smtp.email
+       ADMIN_USERNAME: ${sd_global_admin}
+       ADMIN_PASS: ${sd_global_passwd}
+       ADMIN_EMAIL: me@sdfsdf.com
+       OVERWRITE_SETTING_Show_Setup_Wizard: completed 
+       VIRTUAL_HOST: ${rc_domain}
+       VIRTUAL_PORT: 3000
+       LETSENCRYPT_HOST: ${rc_domain}
+       LETSENCRYPT_EMAIL: ${sdtc_admin_email}
+       Accounts_OAuth_Custom-Keycloak: "true"
+       Accounts_OAuth_Custom-Keycloak-url: https://${keycloak_domain}/auth
+       Accounts_OAuth_Custom-Keycloak-token_path: /realms/master/protocol/openid-connect/token
+       Accounts_OAuth_Custom-Keycloak-token_sent_via: Header
+       Accounts_OAuth_Custom-Keycloak-identity_token_sent_via: header
+       Accounts_OAuth_Custom-Keycloak-identity_path: /realms/master/protocol/openid-connect/userinfo
+       Accounts_OAuth_Custom-Keycloak-authorize_path: /realms/master/protocol/openid-connect/auth
+       Accounts_OAuth_Custom-Keycloak-scope: openid
+       Accounts_OAuth_Custom-Keycloak-id: ${rkt_client_name}
+       Accounts_OAuth_Custom-Keycloak-secret: ${rkt_secret}
+       Accounts_OAuth_Custom-Keycloak-login_style: redirect
+       Accounts_OAuth_Custom-Keycloak-button_label_text: Login via Keycloak
+       Accounts_OAuth_Custom-Keycloak-button_label_color: "#FFFFFF"
+       Accounts_OAuth_Custom-Keycloak-button_color: "#13679A"
+       Accounts_OAuth_Custom-Keycloak-username_field: preferred_username
+       Accounts_OAuth_Custom-Keycloak-merge_users: "false"
+#       - HTTP_PROXY=http://proxy.domain.com
+#       - HTTPS_PROXY=http://proxy.domain.com
+    depends_on:
+      - mongo
+    expose:
+      - 3000
+
+
+   mongo:
+    container_name: sdtc_mongo
+    image: mongo:4.0
+    restart: unless-stopped
+    volumes:
+     - ./data/db:/data/db
+     #- ./data/dump:/dump
+    command: mongod --smallfiles --oplogSize 128 --replSet rs0 --storageEngine=mmapv1
+
+
+  # this container's job is just run the command to initialize the replica set.
+  # it will run the command and remove himself (it will not stay running)
+   mongo-init-replica:
+    image: mongo:4.0
+    command: >
+      bash -c
+        "for i in `seq 1 30`; do
+          mongo mongo/rocketchat --eval \"
+            rs.initiate({
+              _id: 'rs0',
+              members: [ { _id: 0, host: 'localhost:27017' } ]})\" &&
+          s=$$? && break || s=$$?;
+          echo \"Tried $$i times. Waiting 5 secs...\";
+          sleep 5;
+        done; (exit $$s)"
+    depends_on:
+      - mongo
+
+
+################################### WP
+   wordpress:
+      container_name: sdtc_wordpress
+      depends_on:
+        - sdtc_sql_db
+      image: wordpress:latest
+      #change ports 8001 to expose 80 (nginx-proxy)
+      expose:
+        - 80
+      restart: always
+      environment:
+        VIRTUAL_HOST: ${wp_domain}
+        LETSENCRYPT_HOST: ${wp_domain}
+        LETSENCRYPT_EMAIL: ${sdtc_admin_email}
+        WORDPRESS_DB_HOST: sdtc_sql_db:3306
+        WORDPRESS_DB_NAME: ${SDTC_WP_table}
+        WORDPRESS_DB_USER: ${MYSQL_USER}
+        WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+        WORDPRESS_TABLE_PREFIX: "wp_"
+        WORDPRESS_DEBUG: 1
+      # vstm: add shared volume
+      volumes:
+        - ${LOCAL_WP_DIR}:/var/www/html
+
+   wordpress-cli:
+      depends_on:
+        - sdtc_sql_db
+        - wordpress
+      image: wordpress:cli
+      expose:
+        - 80
+      container_name: wordpress-client
+      # vstm: This is required to run wordpress-cli with the same
+      # user-id as wordpress. This way there are no permission problems
+      # when running the cli
+      user: xfs
+      environment:
+        SDTC_WPADMIN: ${sd_global_admin}
+        SDTC_WPPASSWD: ${sd_global_passwd}
+        SDTC_WPDOMAIN: ${wp_domain}
+        SDTC_WPEMAIL: ${sdtc_admin_email}
+      # vstm: The sleep 45 is required so that the command is run after
+      # mysql is initialized. Depending on your machine this might take
+      # longer or it can go faster.
+      command: >
+        /bin/sh -c '
+        sleep 45;
+        wp core install --path="/var/www/html" --url="https://$$SDTC_WPDOMAIN" --title="SDTC" --admin_user=$$SDTC_WPADMIN --admin_password=$$SDTC_WPPASSWD --admin_email=$$SDTC_WPEMAIL;
+        wp plugin install daggerhart-openid-connect-generic --activate
+        '
+      # vstm: add shared volume
+      volumes:
+        - ${LOCAL_WP_DIR}:/var/www/html
+
+#####################################APP FOR STATIC WEBSITE   
+
+   web:
+    container_name: sdtc_apache_web
+    image: apache
+#    build: ./mainwebsite
+    volumes:
+      - "./web:/var/www/html"
+    restart: always
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: ${home_domain}
+      LETSENCRYPT_HOST: ${home_domain}
+      LETSENCRYPT_EMAIL: ${sdtc_admin_email}
+
+
+
+
+
+
+networks:
+    default:
+       external:
+         name: ${NETWORK}
