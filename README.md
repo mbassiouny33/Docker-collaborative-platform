@@ -12,9 +12,12 @@ A one-click installation script for a Dockerized environment with a couple of ap
  
  ``` python3 installation.py```
 
-##### Fully automated advanced usage with arguments (experimental)
+##### advanced usage with arguments
+###### faster lauch (auto = false) 
+###### Fully automated (auto = true) [ experimental !]
 Sometimes you might want to do a headless installation without interacting with the shell. There are various cases where you just wanna run 1 single command and that's it, for example if you run the command with WinSCP's non-interactive shell or inside a loop to install on multiple machines with an algorithm like 
 such as
+
 ```
 for (i in 0:50)
    DO on server[i] : run this python script with {set_of_names}.listOFdomains[i].org
