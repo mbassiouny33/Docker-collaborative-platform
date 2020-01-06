@@ -62,12 +62,17 @@ Example
 The arguments with the above examples are pretty intuitive  but here's a list of arguments if you still need it:
 
 
+### remove containers and delete
 
+If for whatever reason you need take down all the containers and delete everything you can do so by running uninstall.sh
+```chmod a+x uninstall.sh
+./uninstall.sh
+```
 
 ## Extending this script for production use:
-While this script works good enough, it was not meant for production enviornment. So here's a couple of things to do if you plan to use in production.
-- Change temporary dockers volumes to persistent volumes
-- if you already have a userbase on an LDAP/SAML server, keycloak can delegate the authentication to them. You just need to configure it with the administration panel. 
+While this script works good enough, it was not meant for production enviornment. So here are a couple of things to do check before you use it in production.
+- Make sure volumes are all persistent volumes.
+- If you already have a userbase on an LDAP/SAML server, keycloak can delegate the authentication to them. You just need to configure it from the administration panel. 
 
 
 
