@@ -86,7 +86,7 @@ for (i in 0:50)
 ```
 
 
-WARNING: instead of waiting for your confirmation when SSl signature is done, the script will blindly wait for an amount of seconds and try to resume. Thus it might fail if the wait timer is over before letsencrypt signs your certificate.
+WARNING: instead of waiting for your confirmation when SSl signature is done, the script will try to do https requests and wait till they work. 
 
 
 Example 
@@ -118,7 +118,7 @@ If for whatever reason you need take down all the containers and delete everythi
 
 ## Usage in production use:
 The script works fine, you can use it in production enviornment.But first, here are a couple of things to do check before you use it in production.
-- Make sure volumes are all persistent volumes.
+- Make sure volumes are all persistent volumes and organised in a relevant way to your project.
 - If you already have a userbase on an LDAP/SAML server, keycloak can delegate the authentication to them. You just need to configure it from the administration panel. 
 
 
@@ -142,11 +142,13 @@ The admin account is local to each website. Make sure you didn't log in using Ke
 Sometimes the wordpress installation might start before the database container is ready causing the installation to fail and exit. The solution is easy.
 - open your terminal
 - cd to script directory
-- Run `docker-compose run -d wordpress-cli` (might take 1-2 minutes to install)
+- Run `docker-compose run -d wordpress-cli` (might take up to 1-2 minutes to install)
+- Run `chmod a+x wpoidc_if_error.sh`
+- Run `./wpoidc_if_error.sh`
 
 #### Openid button does nothing in wordpress / Openid not present in nextcloud (with auto mode)
 Probaly the automated insertion of openid setting failed because by the time the script tried to insert the databases were not ready
 - open your terminal
 - cd to script directory
 - Run `chmod a+x push_oid2db.sh`
-- Run `./push_oid2db.sh` (might take 1-2 minutes to install)
+- Run `./push_oid2db.sh` 
