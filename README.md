@@ -116,8 +116,8 @@ If for whatever reason you need take down all the containers and delete everythi
 ./uninstall.sh
 ```
 
-## Extending this script for production use:
-While this script works good enough, it was not meant for production enviornment. So here are a couple of things to do check before you use it in production.
+## Usage in production use:
+The script works fine, you can use it in production enviornment.But first, here are a couple of things to do check before you use it in production.
 - Make sure volumes are all persistent volumes.
 - If you already have a userbase on an LDAP/SAML server, keycloak can delegate the authentication to them. You just need to configure it from the administration panel. 
 
