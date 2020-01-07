@@ -1,5 +1,5 @@
 # Docker-collaborative-platform
-A one-click installation script for a Dockerized environment with a couple of apps (Wordpress, Nextcloud, Rocketchat), an automated openid login (via keycloak) in order to unify a single set of login credentials for all services and an automated reverse proxy with ssl.
+A simple installation script for a Dockerized environment with a couple of apps (Wordpress, Nextcloud, Rocketchat), an automated openid login (via keycloak) in order to unify a single set of login credentials for all services and an automated reverse proxy with ssl.
 
 
 ## Requirements:
