@@ -2,13 +2,6 @@
 
 docker exec -i $(docker ps -qf "name=sdtc_sql_db")  bash <<'EOF'
 
-#nc_secret=c4271547-da8c-444b-bc60-12ad8909cad5
-#wp_secret=9aba9cd7-bdc5-4151-865b-8cb2c57bfa52
-#keycloack_auth_url=https://auth.tora.mohamedh.me/auth/realms/master/protocol/openid-connect/auth
-#keycloack_token_url=https://auth.tora.mohamedh.me/auth/realms/master/protocol/openid-connect/token
-#keycloack_userinfo_url=https://auth.tora.mohamedh.me/auth/realms/master/protocol/openid-connect/userinfo
-#keycloack_logout_url=https://auth.tora.mohamedh.me/auth/realms/master/protocol/openid-connect/logout
-
 
 mysql -u root -p$MYSQL_ROOT_PASSWORD << EOQ
 

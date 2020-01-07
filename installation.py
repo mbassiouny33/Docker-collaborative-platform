@@ -6,7 +6,7 @@ import os
 import sys
 import json
 import time
-
+import requests
 
 parser = optparse.OptionParser()
 
@@ -137,8 +137,20 @@ os.popen(dc_openid).read()
 
 ##WAIT BLOQUANT ICI "verifier que keycloak s'est bien lancé et appuyez sur y"
 if(auto == "True") or (auto == "true"): 
-	print("Veuillez patienter...")
-	time.sleep(100)
+	#V1.1  attente et detection automatique quand ca marche 
+	https_k_url = "https://"  + auth_keycloak_domaine +"/auth/"
+	print("Veuillez patienter Nous verifions pour keycloack..." + https_k_url)
+	while True:
+		try:
+			requestk = requests.get(https_k_url)
+			getattr(requestk, 'status_code', 0)
+		except:
+			pass
+		else:
+			if requestk.status_code == 200:
+				break
+	print ("Keycloak est pret!")
+	time.sleep(10)
 	
 else:
 	print("Vérifiez que KeyCloak s'est bien lancé en visitant : https://" + auth_keycloak_domaine)
@@ -188,8 +200,20 @@ os.popen(remaining_containers).read()
 
 # un 2e WAIT BLOQUANT ICI "verifier que nextcloud et wordpress sont prêts  et appuyez sur y"
 if(auto == "True") or (auto == "true"): 
-	print("Veuillez patienter pour WP et NC...")
-	time.sleep(110)
+	print("Veuillez patienter nous verifions pour WP et NC...")
+	while True:
+		try:
+			requestw = requests.get("https://"  + blog_domaine)
+			getattr(requestw, 'status_code', 0)
+			requestn = requests.get("https://"  + cloud_domaine)
+			getattr(requestn, 'status_code', 0)
+		except:
+			pass
+		else:
+			if requestw.status_code == 200  and requestn.status_code == 200 :
+				break
+	
+	time.sleep(25)
 else:
 	print("Vérifiez que NextCloud et WordPress se sont bien lancés sur : https://"+cloud_domaine+" et https://"+blog_domaine)
 	time.sleep(8)
@@ -200,8 +224,13 @@ else:
 
 
 
+# des fois l'installation de wordpress echoue, on relance l'installation juste au cas ou
+install_wp = "docker-compose run -d wordpress-cli-no-sleep"
+os.popen(install_wp).read()
 
-
+# permette le temps pour l'installation ( si auto= false pas besoin car l'utilisar n'aurait pas appuyer tant l,installation n'est pas faite) 
+if(auto == "True") or (auto == "true"): 
+	time.sleep(65)
 
 #install openid plugin for nextcloud
 install_nc_sociallogin1= "docker exec --user www-data $(docker ps -qf \"name=sdtc_nextcloud\") php occ app:install sociallogin"
