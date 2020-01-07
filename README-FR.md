@@ -29,23 +29,23 @@ automatiquement pour un SSO (single sign on).
 
 ## Le resultat final (post installation) : 
 Après l'installation, vous aurez plusieurs conteneurs docker qui géreront :
-Une page d'accueil simple avec un lien vers les 4 autres services,
-Un serveur d'authentification OpenID (KeyCloak)
-Un blog grâce à Wordpress
-Un service de partage de fichiers avec NextCloud (comme Google Drive)
-Une application de messagerie instantannée grâce à RocketChat (comme Discord)
+- Une page d'accueil simple avec un lien vers les 4 autres services,
+- Un serveur d'authentification OpenID (KeyCloak)
+- Un blog grâce à Wordpress
+- Un service de partage de fichiers avec NextCloud (comme Google Drive)
+- Une application de messagerie instantannée grâce à RocketChat (comme Discord)
 
 ## Comment le script fonctionne-t-il ?
-Le script vous posera une série de questions : des IDs, et une adresse mail, ce seront les ID administrateurs locaux pour chacun des applications.
-Il vous demandera aussi 5 noms de domains (possiblement différents) devant pointer vers l'ip de votre serveur.
-Il écrira certaines données dans des fichiers de configuration (fichier .env)
-Il lancera le reverse proxy
-Il lancera KeyCloak et attendra son installation complète
-Il créera 3 clients dans KeyCloak ( WP, NXTC, RKTC)
-Il récupérera les "secrets" des 3 clients pour les stocker dans le fichier .env
-Il lancera WP, NXTC, RKTC et Apache
-OpenID sera configuré dans RKTC via des variables d'environnement.
-A ce moment là vous aurez WP et NXTC fonctionnels sans OpenID de configuré. Le script insérera les données de configuration dans les bases de données SQL de WP et NXTC
+Le script vous posera une série de questions : des identifiants, et une adresse mail, ce seront les ID administrateurs locaux pour chacune des applications.
+- Il vous demandera aussi 5 noms de domains (possiblement différents) devant pointer vers l'ip de votre serveur.
+- Il écrira certaines données dans des fichiers de configuration (fichier .env)
+- Il lancera le reverse proxy
+- Il lancera KeyCloak et attendra son installation complète
+- Il créera 3 clients dans KeyCloak ( WP, NXTC, RKTC)
+- Il récupérera les "secrets" des 3 clients pour les stocker dans le fichier .env
+- Il lancera WP, NXTC, RKTC et Apache
+- OpenID sera configuré dans RKTC via des variables d'environnement.
+- A ce moment là vous aurez WP et Nextcloud fonctionnels sans OpenID de configuré. Le script insérera les données de configuration dans les bases de données SQL de WP et Nextcloud
 
 ## Utilisation 
 
