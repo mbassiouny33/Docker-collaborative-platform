@@ -100,7 +100,7 @@ The arguments with the above examples are pretty intuitive  but here's a list of
 ```
 -u, --user                 : admin username (this admin will be local to each website)
 -p, --password             : admin password
--m, --mail_adress          : VALID email (will be provided to letsencrypt to sign ssl certificates:: FAIL if mail not valid)
+-m, --mail_adress          : VALID email (it will be provided to letsencrypt to sign ssl certificates:: FAIL if mail not valid)
 -i, --homepage_domain      : Home page/ welcome page containing link to the other websites (we provide one in web/index.html)
 -k, --auth_keycloak_domain : domain that will be used for the keycloack authentifaction
 -w, --blog_domain          : blog domain to be used by wordpress
